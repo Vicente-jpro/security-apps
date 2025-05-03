@@ -8,11 +8,11 @@
 		<version>3.3.11</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.secureapi</groupId>
+	<groupId>com.secure</groupId>
 	<artifactId>secureapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>secureapi</name>
-	<description>This is a spring security api build with java</description>
+	<description>Spring Security apps</description>
 	<url/>
 	<licenses>
 		<license/>
