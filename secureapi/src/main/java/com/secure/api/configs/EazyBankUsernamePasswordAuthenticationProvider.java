@@ -1,19 +1,11 @@
 package com.secure.api.configs;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
-@Component
-@RequiredArgsConstructor
-public class EazyBankUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
-
+//@Profile("!prod")
+//@Component
+//@RequiredArgsConstructor
+public class EazyBankUsernamePasswordAuthenticationProvider 
+/*implements AuthenticationProvider*/ {
+/*
     private final UserDetailsService userDetailsService;
 
     private final PasswordEncoder passwordEncoder;
@@ -26,17 +18,12 @@ public class EazyBankUsernamePasswordAuthenticationProvider implements Authentic
         final var userDetails = userDetailsService.loadUserByUsername(username);
         final var isEqualPassword = passwordEncoder.matches(password, userDetails.getPassword());
 
-        if (isEqualPassword) {
-            // Here I can perform validation to check everything that I want.
-            // Ex: Fetch age details and perform validation to check if age > 18
-          return  new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
-        }
-
-        throw new BadCredentialsException("Username/Password invalid.");
+        return  new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
+    */
 }

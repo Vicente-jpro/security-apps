@@ -1,20 +1,15 @@
 package com.secure.api.configs;
 
+import com.secure.api.exceptionhandlers.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
-import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiReactivePasswordChecker;
-
-import java.security.Principal;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+
 
 @Configuration
 public class SecurityConfig {
@@ -22,32 +17,31 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
       //  http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
-        http.authorizeHttpRequests((requests) -> requests
+        http
+            .sessionManagement(smc -> smc.invalidSessionUrl("/invalid-session"))
+        	// When application is deployed, this line should exist to accept only HTTPS requests.
+        	//.requiresChannel(rcc -> rcc.anyRequest().requiresSecure())
+
+        	// This can be used when we are developing the application to accept only HTTP request.
+        	.csrf(crsfConfig -> crsfConfig.disable())
+        	.authorizeHttpRequests((requests) -> requests
             .requestMatchers("/account","/balance", "/loan").authenticated()
-            .requestMatchers("/hello", "/error").permitAll());
+            .requestMatchers("/hello", "/error", "/register", "/invalid-session", "/").permitAll());
         http.formLogin(withDefaults());
-        http.httpBasic(withDefaults());
+        http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+        // This is for monolitic application.
+        //  http.exceptionHandling(ehc -> ehc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())
+        //    .accessDeniedPage("/denied"));
+        http.exceptionHandling(ehc -> ehc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(){
-        return null;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        final var password = new BCryptPasswordEncoder();
-        password.encode("this password");
-        password.matches("this password", "password from database");
-
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
-    /* Used to check the user password if it is eases password or not.
-    @Bean
-    public CompromisedPasswordChecker compromisedPasswordChecker(){
-        return new HaveIBeenPwnedRestApiPasswordChecker();
-    }
-    */
+
 }
